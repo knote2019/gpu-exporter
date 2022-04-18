@@ -1,42 +1,39 @@
 package server
 
 import (
-	"context"
-	"flag"
 	"fmt"
-	"google.golang.org/grpc"
-	pb "grpc-server/protobuf/helloworld"
+	"github.com/NVIDIA/go-nvml/pkg/nvml"
 	"log"
-	"net"
 )
 
-var (
-	port = flag.Int("port", 50051, "The server port")
-)
-
-type server struct {
-	pb.UnimplementedGreeterServer
-}
-
-func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	log.Printf("Received: %v", in.GetName())
-	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
-}
 
 func StartServer()  {
-	log.Print("server started !!!")
-
-	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+	fmt.Printf("cuda nvml start\n")
+	ret := nvml.Init()
+	if ret != nvml.SUCCESS{
+		log.Fatalf("unable to init NVML: %v\n", nvml.ErrorString(ret))
 	}
-	s := grpc.NewServer()
-	pb.RegisterGreeterServer(s, &server{})
-	log.Printf("server listening at %v", lis.Addr())
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	defer func() {
+		ret:= nvml.Shutdown()
+		if ret != nvml.SUCCESS{
+			log.Fatalf("unable to shutdown NVML: %v\n", nvml.ErrorString(ret))
+		}
+	}()
+
+	count, ret := nvml.DeviceGetCount()
+	if ret != nvml.SUCCESS{
+		log.Fatalf("unable to get device count: %v\n", nvml.ErrorString(ret))
 	}
 
-	log.Print("server stopped !!!")
+	for i:=0;i<count;i++{
+		device, ret := nvml.DeviceGetHandleByIndex(i)
+		if ret != nvml.SUCCESS{
+			log.Fatalf("unable to get device at index %v: %v\n", i, nvml.ErrorString(ret))
+		}
+		uuid, ret := device.GetUUID()
+		if ret!= nvml.SUCCESS{
+			log.Fatalf("unable to get UUID Of device at index %v: %v\n", i, nvml.ErrorString(ret))
+		}
+		fmt.Printf("UUID: %v\n", uuid)
+	}
 }

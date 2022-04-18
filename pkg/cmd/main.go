@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	grpcserver "grpc-server/pkg/server"
+	gpu_monitor "gpu-monitor/pkg/server"
 )
 
 func main() {
-	fmt.Print("server started !!!\n")
-	grpcserver.StartServer()
-	fmt.Print("server started !!!\n")
+	fmt.Print("GPU Monitor started !!!\n")
+	gpu_monitor.StartServer()
+	fmt.Print("GPU Monitor started !!!\n")
 }
