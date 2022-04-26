@@ -5,6 +5,7 @@ import (
 	"github.com/NVIDIA/go-nvml/pkg/nvml"
 	"github.com/prometheus/client_golang/prometheus"
 	"strconv"
+	"time"
 )
 
 type GPUInfoCollector struct {
@@ -18,38 +19,40 @@ type GPUInfoCollector struct {
 }
 
 func NewGPUInfoCollector(index int, name string, uuid string) *GPUInfoCollector {
+	t := time.Now()
+	timestamp := t.Format("2006-01-02 15:04:05")
 	return &GPUInfoCollector{
 		Seq: index,
 		Temperature: prometheus.NewDesc(
 			"gpu_temperature",
 			"Shows gpu temperature (C)",
 			nil,
-			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid}),
+			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid, "timestamp": timestamp}),
 		MemTotal: prometheus.NewDesc(
 			"gpu_memory_total",
 			"Shows gpu memory total (MiB)",
 			nil,
-			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid}),
+			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid, "timestamp": timestamp}),
 		MemUsed: prometheus.NewDesc(
 			"gpu_memory_used",
 			"Shows gpu memory used (MiB)",
 			nil,
-			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid}),
+			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid, "timestamp": timestamp}),
 		MemFree: prometheus.NewDesc(
 			"gpu_memory_free",
 			"Shows gpu memory free (MiB)",
 			nil,
-			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid}),
+			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid, "timestamp": timestamp}),
 		MemUtilization: prometheus.NewDesc(
 			"mem_utilization",
 			"Shows mem utilization (%)",
 			nil,
-			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid}),
+			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid, "timestamp": timestamp}),
 		GPUUtilization: prometheus.NewDesc(
 			"gpu_utilization",
 			"Shows gpu utilization (%)",
 			nil,
-			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid}),
+			prometheus.Labels{"gpu_seq": strconv.Itoa(index), "name": name, "uuid": uuid, "timestamp": timestamp}),
 	}
 }
 
