@@ -1,4 +1,4 @@
-module gpu-monitor
+module gpu-exporter
 
 go 1.17
 

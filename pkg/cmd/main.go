@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	gpu_monitor "gpu-monitor/pkg/server"
+	exporter "gpu-exporter/pkg/server"
 )
 
 func main() {
 	fmt.Print("GPU Exporter started !!!\n")
-	gpu_monitor.StartServer()
+	exporter.StartServer()
 	fmt.Print("GPU Exporter started !!!\n")
 }
