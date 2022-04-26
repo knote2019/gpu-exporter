@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	exporter "gpu-exporter/pkg/server"
+	"gpu-exporter/pkg/exporter"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-package server
+package exporter
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
@@ -16,7 +16,7 @@ func StartServer()  {
 		uuid := getGPUUuid(index)
 		register.MustRegister(NewGPUInfoCollector(index, name, uuid))
 	}
-	// start http server.
+	// start exporter.
 	http.Handle("/metrics", promhttp.HandlerFor(register, promhttp.HandlerOpts{}))
 	log.Fatal(http.ListenAndServe(":12022", nil))
 }
