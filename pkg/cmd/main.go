@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	fmt.Print("GPU Monitor started !!!\n")
+	fmt.Print("GPU Exporter started !!!\n")
 	gpu_monitor.StartServer()
-	fmt.Print("GPU Monitor started !!!\n")
+	fmt.Print("GPU Exporter started !!!\n")
 }
