@@ -1,39 +1,23 @@
 package server
 
 import (
-	"fmt"
-	"github.com/NVIDIA/go-nvml/pkg/nvml"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
+	"net/http"
+	"strconv"
 )
 
 
 func StartServer()  {
-	fmt.Printf("cuda nvml start\n")
-	ret := nvml.Init()
-	if ret != nvml.SUCCESS{
-		log.Fatalf("unable to init NVML: %v\n", nvml.ErrorString(ret))
-	}
-	defer func() {
-		ret:= nvml.Shutdown()
-		if ret != nvml.SUCCESS{
-			log.Fatalf("unable to shutdown NVML: %v\n", nvml.ErrorString(ret))
-		}
-	}()
-
-	count, ret := nvml.DeviceGetCount()
-	if ret != nvml.SUCCESS{
-		log.Fatalf("unable to get device count: %v\n", nvml.ErrorString(ret))
+	register := prometheus.NewRegistry()
+	nums := getGPUNums()
+	for i := 0; i < nums; i++ {
+		n := strconv.Itoa(i)
+		name := getGPUName(n)
+		register.MustRegister(NewGPUInfoCollector(n, name))
 	}
 
-	for i:=0;i<count;i++{
-		device, ret := nvml.DeviceGetHandleByIndex(i)
-		if ret != nvml.SUCCESS{
-			log.Fatalf("unable to get device at index %v: %v\n", i, nvml.ErrorString(ret))
-		}
-		uuid, ret := device.GetUUID()
-		if ret!= nvml.SUCCESS{
-			log.Fatalf("unable to get UUID Of device at index %v: %v\n", i, nvml.ErrorString(ret))
-		}
-		fmt.Printf("UUID: %v\n", uuid)
-	}
+	http.Handle("/metrics", promhttp.HandlerFor(register, promhttp.HandlerOpts{}))
+	log.Fatal(http.ListenAndServe(":12022", nil))
 }
