@@ -1,0 +1,6 @@
+有用的参考文章:
+https://www.modb.pro/db/126391
+
+由于nvml需要使用libnvidia-ml.so.1，所以要保证存在.
+ln -sf /opt/ixml/libixml.so /usr/lib/x86_64-linux-gnu/libnvidia-ml.so
+ln -sf /opt/ixtop/libixml.so /usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1
